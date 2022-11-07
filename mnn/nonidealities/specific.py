@@ -3,11 +3,11 @@ import numpy.typing as npt
 import scipy.constants as const
 import tensorflow as tf
 import tensorflow_probability as tfp
-from awarememristor.crossbar import utils
 from KDEpy import bw_selection
 from tensorflow.python.ops.numpy_ops import np_config
 from tensorflow_probability import distributions as tfd
 
+from . import utils
 from .definition import (LinearityNonpreserving, LinearityPreserving,
                          Nonideality)
 
@@ -91,7 +91,14 @@ class IVNonlinearityPF(Nonideality, LinearityNonpreserving):
     def label(self):
         slopes = self.slopes.numpy()
         intercepts = self.intercepts.numpy()
-        return f"IVNL_PF:{slopes[0]:.3g}_{intercepts[0]:.3g}__{slopes[1]:.3g}_{intercepts[1]:.3g}"
+        return (
+            "IVNL_PF={"
+            f"m_c={slopes[0]:.3g},"
+            f"c_c={intercepts[0]:.3g},"
+            f"m_d={slopes[1]:.3g},"
+            f"c_d={intercepts[1]:.3g}"
+            "}"
+        )
 
 
 class StuckAt(Nonideality, LinearityPreserving):
@@ -108,7 +115,7 @@ class StuckAt(Nonideality, LinearityPreserving):
         self.probability = probability
 
     def label(self):
-        return f"Stuck:{self.value:.3g}_{self.probability:.3g}"
+        return "Stuck={" f"value={self.value:.3g}," f"p={self.probability:.3g}" "}"
 
     def disturb_G(self, G):
         mask = utils.random_bool_tensor(G.shape, self.probability)
@@ -123,7 +130,7 @@ class StuckAtGOff(StuckAt):
         StuckAt.__init__(self, G_off, probability)
 
     def label(self):
-        return f"StuckOff:{self.probability:.3g}"
+        return "StuckOff={" f"p={self.probability:.3g}" "}"
 
 
 class StuckAtGOn(StuckAt):
@@ -133,7 +140,7 @@ class StuckAtGOn(StuckAt):
         StuckAt.__init__(self, G_on, probability)
 
     def label(self):
-        return f"StuckOn:{self.probability:.3g}"
+        return "StuckOn={" f"p={self.probability:.3g}" "}"
 
 
 class StuckDistribution(Nonideality, LinearityPreserving):
@@ -163,7 +170,9 @@ class StuckDistribution(Nonideality, LinearityPreserving):
         self.distribution = self._kde(means, bandwidth)
 
     def label(self) -> str:
-        return f"StuckDistr:{self.probability:.3g}_{self.bandwidth:.3g}"
+        return (
+            "StuckDistr={" f"p={self.probability:.3g}," f"bw={self.bandwidth:.3g}" "}"
+        )
 
     @staticmethod
     def _kde(means: list[float], bandwidth: float) -> tfd.Distribution:
@@ -236,7 +245,12 @@ class D2DLognormal(Nonideality, LinearityPreserving):
         self.R_off_log_std = R_off_log_std
 
     def label(self):
-        return f"D2DLN:{self.R_on_log_std:.3g}_{self.R_off_log_std:.3g}"
+        return (
+            "D2DLN={"
+            f"R_on_log_std={self.R_on_log_std:.3g},"
+            f"R_off_log_std={self.R_off_log_std:.3g}"
+            "}"
+        )
 
     def disturb_G(self, G):
         R = 1 / G
