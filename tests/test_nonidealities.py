@@ -1,7 +1,7 @@
 import pytest
 import tensorflow as tf
 
-from mnn import nonidealities
+from memnet import nonidealities
 
 
 @pytest.mark.parametrize(

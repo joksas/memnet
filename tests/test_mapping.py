@@ -1,7 +1,7 @@
 import pytest
 import tensorflow as tf
 
-from mnn import mapping, nonidealities
+from memnet import mapping, nonidealities
 
 from . import utils
 
@@ -185,4 +185,3 @@ def test_ideal_dpe(args, expected, G_off, G_on, k_V):
     y = mapping.I_to_y(I, k_V, max_weight, G_on, G_off)
 
     utils.assert_tf_approx(y, expected)
-
