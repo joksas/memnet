@@ -1,5 +1,5 @@
-KDEpy==1.1.0
-numpy==1.23.4
-scipy==1.9.3
-tensorflow-probability==0.18.0
-tensorflow==2.10.0
+KDEpy>=1.1.0
+numpy>=1.23.4
+scipy>=1.9.3
+tensorflow-probability>=0.18.0
+tensorflow>=2.10.0
